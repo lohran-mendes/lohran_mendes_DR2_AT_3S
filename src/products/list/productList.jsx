@@ -1,6 +1,6 @@
 import "./productList.css";
 import { useEffect, useState } from "react";
-import { ProductItem } from "../productItem";
+import { ProductItem } from "../item/productItem";
 
 export function ProductList() {
   const [products, setProducts] = useState([]);
