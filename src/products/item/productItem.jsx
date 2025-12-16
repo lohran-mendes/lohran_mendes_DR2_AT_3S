@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import "./productItem.css";
 
-export function ProductItem({ product }) {
+export function ProductItem({ product, onDelete }) {
   const { title, price, thumbnail } = product;
 
   return (
@@ -11,9 +11,14 @@ export function ProductItem({ product }) {
         <img src={thumbnail} alt={title} />
         <span>Preço ${price}</span>
       </Link>
-      <Link to={`/novo/${product.id}`} className="edit-button">
-        Editar
-      </Link>
+      <div className="product-actions">
+        <Link to={`/novo/${product.id}`} className="edit-button">
+          Editar
+        </Link>
+        <button onClick={onDelete} className="delete-button">
+          Excluir
+        </button>
+      </div>
     </li>
   );
 }

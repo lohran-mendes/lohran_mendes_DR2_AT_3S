@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router";
 import "./productForm.css";
 
 export function ProductForm() {
-  const { id: productId } = useParams();
+  const { id: productIdOfParam } = useParams();
   const navigate = useNavigate();
   const {
     register,
@@ -15,11 +15,11 @@ export function ProductForm() {
   } = useForm();
 
   useEffect(() => {
-    if (!productId) return;
+    if (!productIdOfParam) return;
 
     async function fetchProductById() {
       const response = await fetch(
-        `https://dummyjson.com/products/${productId}`
+        `https://dummyjson.com/products/${productIdOfParam}`
       );
       const productData = await response.json();
       return productData;
@@ -58,10 +58,36 @@ export function ProductForm() {
       .catch((err) => console.error("Erro ao criar produto:", err));
   }
 
+  async function updateProduct(data) {
+    const { title, price, description, category } = data;
+
+    await fetch(`https://dummyjson.com/products/${productIdOfParam}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        price: parseFloat(price),
+        description,
+        category,
+      }),
+    })
+      .then((res) => res.json())
+      .then(() => navigate("/"))
+      .catch((err) => console.error("Erro ao atualizar produto:", err));
+  }
+
+  function handleSubmitForm(data) {
+    if (productIdOfParam) {
+      updateProduct(data);
+    } else {
+      createProduct(data);
+    }
+  }
+
   return (
     <div className="product-form">
       <h1>Formulário de Produto</h1>
-      <form onSubmit={handleSubmit((data) => createProduct(data))}>
+      <form onSubmit={handleSubmit((data) => handleSubmitForm(data))}>
         <label htmlFor="title">titulo</label>
         <input
           type="text"
@@ -79,8 +105,10 @@ export function ProductForm() {
         <input
           type="number"
           id="price"
+          step="0.01"
           {...register("price", {
             required: "O preço é obrigatório",
+            valueAsNumber: true,
             min: { value: 0, message: "O preço não pode ser negativo" },
           })}
         />
