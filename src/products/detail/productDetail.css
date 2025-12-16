@@ -83,3 +83,77 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .product-detail {
+    padding: 20px 15px;
+
+    & h1 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    & .container-detail {
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    & img {
+      width: 100%;
+      min-width: 100%;
+      height: auto;
+      max-height: 300px;
+    }
+
+    & .info {
+      gap: 12px;
+
+      & h2 {
+        font-size: 1.5rem;
+      }
+
+      & .description {
+        font-size: 0.95rem;
+      }
+
+      & .price {
+        font-size: 1.5rem;
+        padding: 10px 16px;
+      }
+
+      & .category,
+      & .stock,
+      & .rating,
+      & .shipping,
+      & .warranty {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .product-detail {
+    padding: 15px 10px;
+
+    & h1 {
+      font-size: 1.3rem;
+    }
+
+    & .container-detail {
+      padding: 15px;
+    }
+
+    & .info {
+      & h2 {
+        font-size: 1.3rem;
+      }
+
+      & .price {
+        font-size: 1.3rem;
+        padding: 8px 14px;
+      }
+    }
+  }
+}
