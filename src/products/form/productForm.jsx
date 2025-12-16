@@ -1,17 +1,38 @@
+import { useNavigate } from "react-router";
 import "./productForm.css";
 import { useForm } from "react-hook-form";
 
 export function ProductForm() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  async function createProduct(data) {
+    const { title, price, description, category } = data;
+
+    await fetch("https://dummyjson.com/products/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        price: parseFloat(price),
+        description,
+        category,
+        images: ["https://placehold.co/600x400?text=Produto"],
+      }),
+    })
+      .then((res) => res.json())
+      .then(() => navigate("/"))
+      .catch((err) => console.error("Erro ao criar produto:", err));
+  }
+
   return (
     <div className="product-form">
       <h1>Formulário de Produto</h1>
-      <form onSubmit={handleSubmit((data) => console.log(data))}>
+      <form onSubmit={handleSubmit((data) => createProduct(data))}>
         <label htmlFor="title">titulo</label>
         <input
           type="text"
