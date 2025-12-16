@@ -1,14 +1,43 @@
-import { useNavigate } from "react-router";
-import "./productForm.css";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router";
+
+import "./productForm.css";
 
 export function ProductForm() {
+  const { id: productId } = useParams();
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    if (!productId) return;
+
+    async function fetchProductById() {
+      const response = await fetch(
+        `https://dummyjson.com/products/${productId}`
+      );
+      const productData = await response.json();
+      return productData;
+    }
+
+    function resetFormWithProductData(data) {
+      const newValuesToForm = {
+        title: data.title,
+        price: data.price,
+        description: data.description,
+        category: data.category,
+      };
+
+      reset(newValuesToForm);
+    }
+
+    fetchProductById().then(resetFormWithProductData);
+  }, []);
 
   async function createProduct(data) {
     const { title, price, description, category } = data;

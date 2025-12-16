@@ -5,12 +5,15 @@ export function ProductItem({ product }) {
   const { title, price, thumbnail } = product;
 
   return (
-    <Link to={`/produtos/${product.id}`}>
-      <li className="product-item">
+    <li className="product-item">
+      <Link to={`/produtos/${product.id}`} className="product-link">
         <h1>{title}</h1>
         <img src={thumbnail} alt={title} />
         <span>Preço ${price}</span>
-      </li>
-    </Link>
+      </Link>
+      <Link to={`/novo/${product.id}`} className="edit-button">
+        Editar
+      </Link>
+    </li>
   );
 }
