@@ -1,0 +1,18 @@
+.product-list {
+  padding: 30px 50px;
+  & ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    gap: 20px;
+  }
+  & h1 {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+    color: #27517a;
+    font-weight: 700;
+    font-size: 2rem;
+  }
+}
