@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 
 import "./productForm.css";
+import { toast, ToastContainer } from "react-toastify";
 
 export function ProductForm() {
   const { id: productIdOfParam } = useParams();
@@ -37,50 +38,78 @@ export function ProductForm() {
     }
 
     fetchProductById().then(resetFormWithProductData);
-  }, []);
+  }, [productIdOfParam, reset]);
 
   async function createProduct(data) {
     const { title, price, description, category } = data;
 
-    await fetch("https://dummyjson.com/products/add", {
+    return await fetch("https://dummyjson.com/products/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title,
-        price: parseFloat(price),
+        price,
         description,
         category,
         images: ["https://placehold.co/600x400?text=Produto"],
       }),
     })
       .then((res) => res.json())
-      .then(() => navigate("/"))
-      .catch((err) => console.error("Erro ao criar produto:", err));
+      .then((data) => data)
+      .catch((err) => {
+        console.error("Erro ao criar produto:", err);
+        return null;
+      });
   }
 
   async function updateProduct(data) {
     const { title, price, description, category } = data;
 
-    await fetch(`https://dummyjson.com/products/${productIdOfParam}`, {
+    return await fetch(`https://dummyjson.com/products/${productIdOfParam}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title,
-        price: parseFloat(price),
+        price,
         description,
         category,
       }),
     })
       .then((res) => res.json())
-      .then(() => navigate("/"))
-      .catch((err) => console.error("Erro ao atualizar produto:", err));
+      .then((data) => data)
+      .catch((err) => {
+        console.error("Erro ao atualizar produto:", err);
+        return null;
+      });
   }
 
-  function handleSubmitForm(data) {
+  async function handleSubmitForm(data) {
     if (productIdOfParam) {
-      updateProduct(data);
+      const updatedProduct = await updateProduct(data);
+      if (updatedProduct) {
+        navigate("/", {
+          state: {
+            from: "productForm",
+            productUpdated: true,
+            productId: productIdOfParam,
+          },
+        });
+      } else {
+        toast.error("Erro ao atualizar produto");
+      }
     } else {
-      createProduct(data);
+      const createdProduct = await createProduct(data);
+      if (createdProduct) {
+        navigate("/", {
+          state: {
+            from: "productForm",
+            productCreated: true,
+            productId: createdProduct.id,
+          },
+        });
+      } else {
+        toast.error("Erro ao criar produto");
+      }
     }
   }
 
@@ -94,6 +123,10 @@ export function ProductForm() {
           id="title"
           {...register("title", {
             required: "O título é obrigatório",
+            maxLength: {
+              value: 50,
+              message: "O título deve ter no máximo 50 caracteres",
+            },
             validate: (value) =>
               value.trim().length > 0 ||
               "Não pode conter apenas espaços vazios",
@@ -109,7 +142,7 @@ export function ProductForm() {
           {...register("price", {
             required: "O preço é obrigatório",
             valueAsNumber: true,
-            min: { value: 0, message: "O preço não pode ser negativo" },
+            min: { value: 0.01, message: "O preço tem que ser maior que zero" },
           })}
         />
         <p className="message-error">{errors.price?.message}</p>
@@ -142,6 +175,7 @@ export function ProductForm() {
 
         <button type="submit">Salvar</button>
       </form>
+      <ToastContainer position="top-center" />
     </div>
   );
 }

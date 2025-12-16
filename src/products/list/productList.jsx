@@ -1,8 +1,11 @@
 import "./productList.css";
 import { useEffect, useState } from "react";
 import { ProductItem } from "../item/productItem";
+import { ToastContainer, toast } from "react-toastify";
+import { useLocation } from "react-router";
 
 export function ProductList() {
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -13,6 +16,18 @@ export function ProductList() {
     setProducts(data.products);
     setLoading(false);
   }
+
+  useEffect(() => {
+    if (location.state?.productUpdated) {
+      toast.success(
+        `Produto com o ID ${location.state.productId} atualizado com sucesso!`
+      );
+    } else if (location.state?.productCreated) {
+      toast.success(
+        `Produto criado com sucesso! ID do produto: ${location.state.productId}`
+      );
+    }
+  }, [location.state]);
 
   useEffect(() => {
     fetchProducts();
@@ -30,6 +45,7 @@ export function ProductList() {
     setProducts((prevProducts) =>
       prevProducts.filter((product) => product.id !== productId)
     );
+    toast.success("Produto excluído com sucesso!");
   }
 
   return (
@@ -46,6 +62,7 @@ export function ProductList() {
           );
         })}
       </ul>
+      <ToastContainer position="top-center" />
     </div>
   );
 }
